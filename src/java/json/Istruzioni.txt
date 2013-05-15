@@ -1,0 +1,40 @@
+A JSONObject is an unordered collection of name/value pairs. Its external form is a string wrapped in curly braces with colons between the names and values, and commas between the values and names. The internal form is an object having get() and opt() methods for accessing the values by name, and put() methods for adding or replacing values by name. The values can be any of these types: Boolean, JSONArray, JSONObject, Number, and String, or the JSONObject.NULL object. 
+
+A JSONArray is an ordered sequence of values. Its external form is a string wrapped in square brackets with commas between the values. The internal form is an object having get() and opt() methods for accessing the values by index, and put() methods for adding or replacing values. The values can be any of these types: Boolean, JSONArray, JSONObject, Number, and String, or the JSONObject.NULL object. 
+
+A JSONStringer is a tool for rapidly producing JSON text.
+
+A JSONWriter is a tool for rapidly writing JSON text to streams..
+
+A JSONTokener takes a source string and extracts characters and tokens from it. It is used by the JSONObject and JSONArray constructors to parse JSON source strings.
+
+A JSONException is thrown when a syntax or procedural error is detected.
+
+The JSONString is an interface that allows classes to implement their JSON serialization.
+
+
+
+
+
+CDL
+This provides static methods to convert comma delimited list text into a JSONArray, and to covert a JSONArray into comma delimited list text. Comma delimited list text is a very popular format for data interchange. It is understood by most database, spreadsheet, and organizer programs. 
+
+XML
+This provides static methods to convert an XML text into a JSONObject, and to covert a JSONObject into an XML text.
+
+JSONML
+This provides static methods to convert an XML text into a JSONArray or JSONObject, and to covert a JSONArray or JSONObject into an XML text using the JsonML transform.
+
+The XMLTokener extends the JSONTokener to provide additional methods for the parsing of XML texts.
+
+HTTP
+Convert an HTTP header to a JSONObject and back.
+
+HTTPTokener
+The HTTPTokener extends the JSONTokener to provide additional methods for the parsing of HTTP headers.
+
+Cookie
+Convert a web browser cookie specification to a JSON object and back.
+
+CookieList
+Convert a web browser cookie list string to a JSON object and back.

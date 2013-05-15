@@ -1,0 +1,16 @@
+Tue May 07 22:23:28 CEST 2013 : Apache Derby Server di rete: 10.8.1.2 - (1095077) avviato e pronto ad accettare connessioni sulla porta 1527
+----------------------------------------------------------------
+Tue May 07 23:05:39 CEST 2013:
+Avvio della versione di Derby The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): istanza a816c00e-013e-80a9-be6f-fffff95d4cfb
+su directory database D:\Giulio\UniVe\TAW\NetBeansProjects\WebApplication1\DB\ProvaDB1  con caricatore classi sun.misc.Launcher$AppClassLoader@709db0ad 
+
+java.vendor=Oracle Corporation
+java.runtime.version=1.7.0_17-b02
+user.dir=C:\Program Files\glassfish-3.1.2.2\javadb
+derby.system.home=D:\Giulio\UniVe\TAW\NetBeansProjects\WebApplication1\DB
+Programma di caricamento classe database avviato - derby.database.classpath=''
+----------------------------------------------------------------
+Tue May 07 23:08:54 CEST 2013: Shutting down Derby engine
+----------------------------------------------------------------
+Tue May 07 23:08:54 CEST 2013:
+Arresto istanza a816c00e-013e-80a9-be6f-fffff95d4cfb con caricatore classi D:\Giulio\UniVe\TAW\NetBeansProjects\WebApplication1\DB\ProvaDB1 
