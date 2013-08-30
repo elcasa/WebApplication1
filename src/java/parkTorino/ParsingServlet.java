@@ -15,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import parkTorino.utils.Parser;
 
 /**
  *
@@ -44,6 +45,9 @@ public class ParsingServlet extends HttpServlet {
         }
         */
         
+        Thread t = new Thread( new Parser());
+        t.run();
+        /*
         DataManager dm =null;
         
         try {
@@ -57,7 +61,7 @@ public class ParsingServlet extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-                     
+        */             
         
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -81,12 +85,13 @@ public class ParsingServlet extends HttpServlet {
         } finally {            
             out.close();
         }
-        
+        /*
         try {
             dm.close();
         } catch (SQLException ex) {
             Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
