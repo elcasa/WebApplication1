@@ -28,15 +28,29 @@ public class ListaParcheggi {
     
     ArrayList<ParcheggioItem> parcheggiList = new ArrayList<ParcheggioItem>();
     
-    public ListaParcheggi() throws ParserConfigurationException, IOException, SAXException{
+    /**
+    *
+    * @throws ParserConfigurationException
+    * @throws IOException
+    * @throws SAXException
+    */
+   public ListaParcheggi() throws ParserConfigurationException, IOException, SAXException{
         parse();
     }
     
-    public int getOra(){
+    /**
+    *
+    * @return
+    */
+   public int getOra(){
         return ora;
     }
     
-    public ArrayList<ParcheggioItem> getList(){
+    /**
+    *
+    * @return
+    */
+   public ArrayList<ParcheggioItem> getList(){
         return parcheggiList;
     }
     

@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+	<link rel="stylesheet" type="text/css" href="css\style.css"> 
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+	
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    
+	<script>
+var map;
+var coords = new Array();
+	coords[0] = new Array(); coords[0][0] = 45.07243; coords[0][1] = 7.67480;
+	coords[1] = new Array(); coords[1][0] = 45.06355; coords[1][1] = 7.68357;
+	coords[2] = new Array(); coords[2][0] = 45.07248; coords[2][1] = 7.66716;
+	coords[3] = new Array(); coords[3][0] = 45.04289; coords[3][1] = 7.67754;
+	coords[4] = new Array(); coords[4][0] = 45.07666; coords[4][1] = 7.68031;
+	
+function initialize() {
+  var center = new google.maps.LatLng(45.070854, 7.676640);
+  var mapOptions = {
+    zoom: 11,
+    center: center,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+	  
+	var index;
+	for(index=0;index<coords.length;index++)
+	{
+		var lat = coords[index][0];
+		var lng = coords[index][1];
+		var marker = new google.maps.Marker({
+		position: new google.maps.LatLng(lat,lng),
+		map: map,
+		title: 'aggiunto il marker '+index
+		});
+		marker.setMap(map);
+	}
+	  
+	  //aggiungo i marker
+	  //var marker = new google.maps.Marker({
+      //position: new google.maps.LatLng(coords[0][0],coords[0][1]),
+      //map: map,
+      //title: 'aggiunto il marker'
+	//});
+
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+//print_2d_string_array(coords);
+
+
+function print_2d_string_array(array) 
+{ 
+	var row; 
+   
+	//document.writeln("<div class=\"parcheggilist\">");
+	
+	var parkList = document.getElementById("parkList");
+      
+   //document.getElementById("parkList").innerHTML("erererer");
+	
+	for (row=0;row<array.length;++row) 
+	{ 
+		//var col;
+		//for(col = 0;col<array[row].length;++col)
+		//	document.writeln("<td>"+array[row][col]+"</td>");
+		//	document.writeln (" </tr>");
+		//for(col = 0;col<array[row].length;++col)
+		//{
+		
+		/*
+		
+				<span>Park 1<br/>Occupati: 3</span>
+				<div class="progress-bar">
+					<span style="width: 4%;"></span>
+				</div>
+		
+		*/
+			
+         // TEST
+         
+         //parkList.innerHTML="FUNZIA";
+			
+			var span=document.createElement("span");
+			span.innerHTML="Park 1<br/>Occupati: 3";
+         //span.innerHTML="prova";
+			
+			var div=document.createElement("div");
+         div.setAttribute("class","progress-bar")
+						
+			var span2=document.createElement("span");
+			//span2.style="width: 4%;";
+         span2.setAttribute("style","width: 4%;")
+						
+			div.appendChild(span2);
+			
+			parkList.appendChild(span);
+			parkList.appendChild(div);
+			
+        
+			/*
+         document.writeln("Parcheggio "+row);
+			
+			//document.writeln("<span>");
+			//document.writeln("<a href='viewPark.html'><img src=\"images/ic_menu_myplaces.png\" width=\"50\" height=\"50\" /></a>")
+			//document.writeln("</span>");
+			
+			document.writeln("<div class=\"progress-bar\">");
+			document.writeln("<span></span>");
+			document.writeln("</div>");
+         */
+		//}	
+	}
+	//document.writeln("</div>");
+}
+    </script>
+<!--     
+	<script type="text/javascript">
+		$(function(){ 
+
+		$('#bar_change').click(function(){
+			var bar = $('.progress-bar span');
+			var value = parseInt($('#bar_value').val()) > 100 ? 100 : $('#bar_value').val();
+			bar.css('width', value + '%');
+       
+			return false;
+		});
+		});
+	</script>
+-->
+  </head>
+  
+  <body onload="print_2d_string_array(coords);">
+  <!--
+	<ul style="list-style: none" class="navbar">
+		<li>Aggiorna lista</li>
+		<li><img src="images/ic_menu_mapmode.png" width="50" height="50" />Vai alla mappa</li>
+		<li><a href='map.html'>Lista parcheggi</a></li>
+	</ul>
+	-->
+    	
+	CREARE MEGLIO IL DIV
+   <a id="myAnchor" href="http://www.microsoft.com">Microsoft</a>
+   <span id='mySpan'></span>
+   
+	<div class="main">
+		<div class="container">
+		
+			<div id="parkList" class="parcheggilist">
+			 <!--
+				<span >Park 1<br/>Occupati: 3</span>
+				<div class="progress-bar">
+				<span style="width: 4%;"></span>
+				</div>
+				-->
+			
+			
+			</div>
+			
+	
+		</div>
+		<div id="map-canvas"></div>
+	</div>
+		
+	
+	
+	<!--
+	<form>
+		Partenza <input type="text" name="start_address">
+	</form>
+	<div class="progress-bar">
+		<span></span>
+	</div>
+	<div class="controls">
+        <label for="bar_value">Valore</label>
+        <input type="text" name="bar_value" id="bar_value" value="100" />
+        <input type="submit" id="bar_change" value="Cambia" />
+    </div>
+	-->
+  </body>
+</html>
+

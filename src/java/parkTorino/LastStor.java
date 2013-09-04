@@ -5,7 +5,9 @@
 package parkTorino;
 
 /**
- *
+ * Javabean contente la fascia oraia dell'ultimo aggiornamento 
+ * della tabella storici, utilizzato per limitare gli update degli storici
+ * 
  * @author Giulio
  */
 public class LastStor implements java.io.Serializable {
@@ -14,13 +16,26 @@ public class LastStor implements java.io.Serializable {
     
  
     // Costruttore senza argomenti
-    public LastStor() { }
+    /**
+    *
+    */
+   public LastStor() { }
  
     // Proprietà "nome" (da notare l'uso della maiuscola) lettura / scrittura
-    public static int getOra() {
+   
+    /**
+    *
+    * @return
+    */
+   public static int getOra() {
         return ora;
     }
-    public void setOra(int o) {
+   
+    /**
+    *
+    * @param o
+    */
+   public void setOra(int o) {
         ora = o;
     }
     /*

@@ -54,101 +54,114 @@ Log.d(Riepilogo.tag,"update:"+ultimoAggiornamento);
      */
 private static ArrayList<ParcheggioItem> parcheggiList = new ArrayList<ParcheggioItem>();
 
-public static String splitString(String s)
-{
-String text = s;
-if(text.length()>15)
-{
-String[] items = text.split(" ");
-int i=0;
-if(items.length>2)
-{
-//se ho 2+ elementi
-if((items[0]+items[1]).length()<15)
-{
-text = items[0]+" "+items[1]+"#";
-i = 2;
-}
-}
-else if(items.length>1&&items[0].length()<15)
-{
-text = items[0]+"#";
-i=1;
-}
+   
+   private static String splitString(String s)
+   {
+      String text = s;
+      if(text.length()>15)
+      {
+         String[] items = text.split(" ");
+         int i=0;
+         if(items.length>2)
+         {
+            //se ho 2+ elementi
+            if((items[0]+items[1]).length()<15)
+            {
+            text = items[0]+" "+items[1]+"#";
+            i = 2;
+            }
+         }
+         else if(items.length>1&&items[0].length()<15)
+         {
+            text = items[0]+"#";
+            i=1;
+         }
 
-for(;i<items.length;i++)
-{
-text+=items[i];
-}
-}
-return text;
-}
-
-
-
-public static void updateParcheggi() throws SAXException, IOException, ParserConfigurationException
-{
-ArrayList<ParcheggioItem> parcheggi = new ArrayList<ParcheggioItem>();
-URL url = new URL("http://opendata.5t.torino.it/get_pk");
-DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-DocumentBuilder db = dbf.newDocumentBuilder();
-Document doc = db.parse(new InputSource(url.openStream()));
-doc.getDocumentElement().normalize();
-
-NodeList nodeList = doc.getElementsByTagName("td:PK_data");
-
-for (int i = 0; i < nodeList.getLength(); i++)
-{
-Node node = nodeList.item(i);
-//Log.d(tag,node.getNodeName().toString());
-NamedNodeMap attributes = node.getAttributes();
-
-double latitudine = Double.parseDouble(attributes.getNamedItem("lat").getNodeValue());
-double longitudine = Double.parseDouble(attributes.getNamedItem("lng").getNodeValue());
-//LatLng position = new LatLng(latitudine,longitudine);
-String titolo = attributes.getNamedItem("Name").getNodeValue();
-
-int id=0;
-try
-{id = Integer.parseInt(attributes.getNamedItem("ID").getNodeValue());}
-catch(Exception e){id=-1;}
-
-int status=0;
-try
-{status = Integer.parseInt(attributes.getNamedItem("status").getNodeValue());}
-catch(Exception e){status=-99;}
-
-int parcheggiTotali = 0;
-try
-{parcheggiTotali = Integer.parseInt(attributes.getNamedItem("Total").getNodeValue());}
-catch(Exception e){parcheggiTotali=-1;}
-
-int parcheggiLiberi = 0;
-try
-{parcheggiLiberi = Integer.parseInt(attributes.getNamedItem("Free").getNodeValue());}
-catch(Exception e){parcheggiLiberi=-1;}
-
-int tendenza = 0;
-try
-{tendenza = Integer.parseInt(attributes.getNamedItem("tendence").getNodeValue());}
-catch(Exception e){tendenza=0;}
+         for(;i<items.length;i++)
+         {
+            text+=items[i];
+         }
+      }
+      return text;
+   }
 
 
-//ParcheggioItem pi = new ParcheggioItem(titolo,parcheggiLiberi,parcheggiTotali,tendenza,latitudine,longitudine);
 
-//ParcheggioItem pi = new ParcheggioItem(titolo,parcheggiLiberi,parcheggiTotali,tendenza);
-ParcheggioItem pi = new ParcheggioItem(titolo,id, status, parcheggiLiberi,parcheggiTotali,tendenza,latitudine,longitudine);
-parcheggi.add(pi);
-}
-parcheggiList = parcheggi;
+   /**
+    * Scarica il file xml contenente i dati dei parcheggi e ne fa il parsing 
+    * inserendo i dati in un arraylist di ParcheggioItem
+    * 
+    * @throws SAXException
+    * @throws IOException
+    * @throws ParserConfigurationException
+    */
+   public static void updateParcheggi() throws SAXException, IOException, ParserConfigurationException
+   {
+      ArrayList<ParcheggioItem> parcheggi = new ArrayList<ParcheggioItem>();
+      URL url = new URL("http://opendata.5t.torino.it/get_pk");
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = db.parse(new InputSource(url.openStream()));
+      doc.getDocumentElement().normalize();
+
+      NodeList nodeList = doc.getElementsByTagName("td:PK_data");
+
+      for (int i = 0; i < nodeList.getLength(); i++)
+      {
+         Node node = nodeList.item(i);
+         //Log.d(tag,node.getNodeName().toString());
+         NamedNodeMap attributes = node.getAttributes();
+
+         double latitudine = Double.parseDouble(attributes.getNamedItem("lat").getNodeValue());
+         double longitudine = Double.parseDouble(attributes.getNamedItem("lng").getNodeValue());
+         //LatLng position = new LatLng(latitudine,longitudine);
+         String titolo = attributes.getNamedItem("Name").getNodeValue();
+
+         int id=0;
+         try
+         {id = Integer.parseInt(attributes.getNamedItem("ID").getNodeValue());}
+         catch(Exception e){id=-1;}
+
+         int status=0;
+         try
+         {status = Integer.parseInt(attributes.getNamedItem("status").getNodeValue());}
+         catch(Exception e){status=-99;}
+
+         int parcheggiTotali = 0;
+         try
+         {parcheggiTotali = Integer.parseInt(attributes.getNamedItem("Total").getNodeValue());}
+         catch(Exception e){parcheggiTotali=-1;}
+
+         int parcheggiLiberi = 0;
+         try
+         {parcheggiLiberi = Integer.parseInt(attributes.getNamedItem("Free").getNodeValue());}
+         catch(Exception e){parcheggiLiberi=-1;}
+
+         int tendenza = 0;
+         try
+         {tendenza = Integer.parseInt(attributes.getNamedItem("tendence").getNodeValue());}
+         catch(Exception e){tendenza=0;}
 
 
-//Collections.sort(parcheggiList, new ParcheggioItemComparator());
-}
+         //ParcheggioItem pi = new ParcheggioItem(titolo,parcheggiLiberi,parcheggiTotali,tendenza,latitudine,longitudine);
 
+         //ParcheggioItem pi = new ParcheggioItem(titolo,parcheggiLiberi,parcheggiTotali,tendenza);
+         ParcheggioItem pi = new ParcheggioItem(titolo,id, status, parcheggiLiberi,parcheggiTotali,tendenza,latitudine,longitudine);
+         parcheggi.add(pi);
+         }
+      parcheggiList = parcheggi;
+
+
+      //Collections.sort(parcheggiList, new ParcheggioItemComparator());
+      }
+
+   /**
+    * Fornisce l'ArrayList di ParcheggioItem conentente i dati parsati
+    * @return ArrayList<ParcheggioItem> conentente i dati parsati
+    */
 public static ArrayList<ParcheggioItem> getParcheggi()
 {
-return parcheggiList;
+   return parcheggiList;
 }
 
 

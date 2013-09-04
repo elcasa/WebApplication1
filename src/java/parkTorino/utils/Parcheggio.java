@@ -9,21 +9,61 @@ package parkTorino.utils;
  * @author Giulio
  */
 public class Parcheggio {
-    protected String titolo;
-    protected int liberi;
-    protected int totale;
-    protected double lat;
-    protected double lng;
-    protected int tendenza;
-    protected double distanza;
+    /**
+    *
+    */
+   protected String titolo;
+    /**
+    *
+    */
+   protected int liberi;
+    /**
+    *
+    */
+   protected int totale;
+    /**
+    *
+    */
+   protected double lat;
+    /**
+    *
+    */
+   protected double lng;
+    /**
+    *
+    */
+   protected int tendenza;
+    /**
+    *
+    */
+   protected double distanza;
     
-        public static int FREE_NOT_VALID = -1;
-        public static int FREE_OVERFLOW = -2;
+        /**
+    *
+    */
+   public static int FREE_NOT_VALID = -1;
+        /**
+    *
+    */
+   public static int FREE_OVERFLOW = -2;
         
-        public static int PARK_FULL = 100;
-        public static int PARK_EMPTY = 0;
+        /**
+    *
+    */
+   public static int PARK_FULL = 100;
+        /**
+    *
+    */
+   public static int PARK_EMPTY = 0;
     
-    public Parcheggio(String titolo,int liberi,int totale,int tendenza) 
+    /**
+    *
+    * @param titolo
+    * @param liberi
+    * @param totale
+    * @param tendenza
+    */
+   public Parcheggio(String titolo,int liberi,int totale,int tendenza) 
     {
         this.titolo = titolo;
         this.liberi = liberi;
@@ -31,7 +71,16 @@ public class Parcheggio {
         this.tendenza = tendenza;
     }
     
-    public Parcheggio(String titolo,int liberi,int totale,int tendenza,double lat,double lng)
+    /**
+    *
+    * @param titolo
+    * @param liberi
+    * @param totale
+    * @param tendenza
+    * @param lat
+    * @param lng
+    */
+   public Parcheggio(String titolo,int liberi,int totale,int tendenza,double lat,double lng)
     {
         this.titolo = titolo;
         this.liberi = liberi;
@@ -41,17 +90,29 @@ public class Parcheggio {
         this.tendenza = tendenza;
     }
     
-    public String getTitolo() {
+    /**
+    *
+    * @return
+    */
+   public String getTitolo() {
 
         return titolo;
     }
     
-    public Coords getCoords()
+    /**
+    *
+    * @return
+    */
+   public Coords getCoords()
     {
         return new Coords(lat,lng);
     }
     
-    public String getTendenza()
+    /**
+    *
+    * @return
+    */
+   public String getTendenza()
     {
         if(tendenza>0) return "+";
         if(tendenza<0) return "-";
@@ -59,27 +120,47 @@ public class Parcheggio {
         return "";      
     }
     
-    public int getTendenzaValue()
+    /**
+    *
+    * @return
+    */
+   public int getTendenzaValue()
     {
         return tendenza;
     }
     
-    public double getDistanza()
+    /**
+    *
+    * @return
+    */
+   public double getDistanza()
     {
         return distanza;
     }
     
-    public int getTotale()
+    /**
+    *
+    * @return
+    */
+   public int getTotale()
     {
         return totale;
     }
     
-    public int getLiberi()
+    /**
+    *
+    * @return
+    */
+   public int getLiberi()
     {
         return liberi;
     }
     
-    public int getOccupati()
+    /**
+    *
+    * @return
+    */
+   public int getOccupati()
     {
         if(liberi<0) return FREE_NOT_VALID;
         if(liberi>totale) return FREE_OVERFLOW;
@@ -87,7 +168,11 @@ public class Parcheggio {
         return totale-liberi;
     }
     
-    public int getOccupazione()
+    /**
+    *
+    * @return
+    */
+   public int getOccupazione()
     {
         if(liberi<0) return PARK_FULL;
         if(liberi>totale) return PARK_EMPTY;
@@ -101,12 +186,20 @@ public class Parcheggio {
         return -1;*/
     }
     
-    public class Coords
+    /**
+    *
+    */
+   public class Coords
     {
         double lat;
         double lng;
         
-        public Coords(double lat,double lng)
+        /**
+       *
+       * @param lat
+       * @param lng
+       */
+      public Coords(double lat,double lng)
         {
                 this.lat = lat;
                 this.lng = lng;

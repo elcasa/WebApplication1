@@ -44,6 +44,7 @@ public class ParsingServlet extends HttpServlet {
             Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         */
+               
         
         Thread t = new Thread( new Parser());
         t.run();

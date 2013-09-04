@@ -12,7 +12,8 @@ import parkTorino.DataManager;
 import parkTorino.ParsingServlet;
 
 /**
- *
+ * Runnable che sfrutta la clase DataManager per connettersi al DB
+ * fare il parsing dei dati e inserirli nel DB
  * @author Giulio
  */
 public class Parser implements Runnable{

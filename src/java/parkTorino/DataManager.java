@@ -29,15 +29,29 @@ public class DataManager {
     //private String urlDB="jdbc:derby://localhost:1527/Park;";  // NON TOCCARE!
     private String urlDB="jdbc:derby://localhost:1527/ProvaDB1;";
     
+    private static final int MAX_INT_JDBC = java.lang.Integer.MAX_VALUE;
+    
     private boolean DEBUG = true;
     private java.sql.Connection con = null;
     
+    
     LastStor ls = new LastStor(); // ultimo storico , per evitare di aggiornare lo storico ad ogni aggiornamento dei dati
+    private int fascia;
+    private int ultimaFasciaStor;
+             
     
-    //private static int lastStor = -1; // NON TIENE IL VALORE DI LAST STOR!! TORNA SEMPRE A -1..
+    /**
+    * Connette al DB, se il DB non esistesse lo crea
+    * e crea anche le tabelle
+    * 
+    * @param ultimaFasciaStor
+    * @throws SQLException Se ci sono problemi con la creazione / connesione al DB
+    */
+   public DataManager( int ultimaFasciaStor ) throws SQLException{
         
-    
-    public DataManager() throws SQLException{ // costruttore che lancia eccezioni.. insomma
+        this.ultimaFasciaStor = ultimaFasciaStor;
+        // se -2 non usarlo, se -1 mai aggiornato gli storici
+        
         try {
             
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -70,7 +84,22 @@ public class DataManager {
         }
     }
     
-    public void parseAndInsert() throws SQLException{
+    /**
+    *
+    * @throws SQLException
+    */
+   public DataManager() throws SQLException{
+        this(-2);
+    }
+    
+   
+ /**
+ * Esegue il parsing dell'xml contenente i dati attuali dei parcheggi di Torino
+ * e aggiorna sia i dati attuali che gli storici, se già presenti, altrimenti li inserisce
+ *
+ * @throws SQLException Se si verifica un errore con una query
+ */
+   public void parseAndInsert() throws SQLException{
         /*
         Valori attuali:
         Faccio una update, se mi ritorna il valore zero allora faccio una insert, voleva dire
@@ -95,9 +124,10 @@ public class DataManager {
         }
         
         ArrayList<ParcheggioItem> parkList=lp.getList();   
-                
         
-        int res=-1;
+        fascia = getFascia( lp.getOra() ); // fascia regolerà in che fascia oraria andrò a modificare la media               
+        
+        int res;
         PreparedStatement insert = con.prepareStatement("INSERT INTO PARCHEGGI (id,name, status, total, free, tendence,lat,lng) VALUES(?,?,?,?,?,?,?,?)");                
         PreparedStatement update = con.prepareStatement("UPDATE PARCHEGGI SET status=?, total=?, free=?, tendence=? WHERE id = ?");
         
@@ -112,8 +142,16 @@ public class DataManager {
         updateFasce[2]="UPDATE STORICI SET pomemed=?, pomenum=? WHERE id = ?";
         updateFasce[3]="UPDATE STORICI SET seramed=?, seranum=? WHERE id = ?";
         
-        int fascia = getFascia( lp.getOra() ); // fascia regolerà in che fascia oraria andrò a modificare la media
         
+        /*
+        
+        Object obj = getServletContext().getAttribute("obj");  
+        if(obj==null || (!obj instanceof my.package.name.MyClass)) { // If object is null reinitialize it  
+           obj = new MyClass();  
+           getServletContext().setAttribute("obj", obj);  
+        }   
+         
+        */
         
             // where id = ? e poi grazie al punto di domanda faccio variare l'id per fare tutti gli update
         for(int i=0;i<parkList.size();i++) {
@@ -154,8 +192,13 @@ public class DataManager {
              /*System.out.println("BEFORE IF IN FOR - VAR lastStor= " + lastStor+" , fascia = " + fascia ); 
              if(fascia != -1 && lastStor!=fascia ){ // orario -1= periodo non monitorato per lo storico
                */  
-             System.out.println("BEFORE IF IN FOR - VAR lastStor= " + ls.getOra()+" , fascia = " + fascia ); 
-             if(fascia != -1 && ls.getOra()!=fascia ){ // orario -1= periodo non monitorato per lo storico
+             //System.out.println("BEFORE IF IN FOR - VAR lastStor= " + ls.getOra()+" , fascia = " + fascia ); 
+             System.out.println("BEFORE IF IN FOR - VAR lastStor= " + ultimaFasciaStor +" , fascia = " + fascia ); 
+             
+             // orario -1= periodo non monitorato per lo storico
+             // ls.getOra()!=fascia, non ho già salvato lo storco per questa fascia
+             //if(fascia != -1 && ls.getOra()!=fascia ){  // aggiorna limitato
+             if(fascia != -1  ){    // aggiorna sempre
                  
                 res=0;
                 
@@ -168,6 +211,10 @@ public class DataManager {
                     float vecchiaMedia= rsOld.getFloat(fascia*2+2); // media
                     int num= rsOld.getInt(fascia*2+3);   // num valori
                     float nuovaMedia = (vecchiaMedia*num + parkList.get(i).getDisp() ) / (num+1);
+                    
+                    if( num >= MAX_INT_JDBC){
+                        num =1;
+                    }
                     
                     PreparedStatement updateStor = con.prepareStatement( updateFasce[fascia]);
         
@@ -198,13 +245,13 @@ public class DataManager {
                     // non ha aggiornato alcun record!!! allora faccio una insert
 
                     insertStor.setInt(1, parkList.get(i).getId());
-                    insertStor.setFloat(2, -1f ); //mattina
+                    insertStor.setFloat(2, -1f ); //mattina media
                     insertStor.setInt(3, 0);
-                    insertStor.setFloat(4, -1f); // pranzo
+                    insertStor.setFloat(4, -1f); // pranzo media
                     insertStor.setInt(5, 0);
-                    insertStor.setFloat(6, -1f); // pome
+                    insertStor.setFloat(6, -1f); // pome media
                     insertStor.setInt(7, 0);
-                    insertStor.setFloat(8, -1f); // sera
+                    insertStor.setFloat(8, -1f); // sera media
                     insertStor.setInt(9, 0);
 
                     insertStor.setFloat(fascia*2+2, parkList.get(i).getDisp() );
@@ -231,6 +278,13 @@ public class DataManager {
         
     }
     
+   /**
+    * Fornisce la fascia oraria a partire dall'ora del giorno.
+    * 
+    * @param ora L'ora da esaminare
+    * @return Un intero indicante la fascia oraria
+    */ 
+   
     private int getFascia( int ora){
         
         if (ora>=7 && ora<=11)
@@ -242,14 +296,21 @@ public class DataManager {
         if (ora>=15 && ora<=18)
             return 2;
         
-        if (ora>=19 && ora<=23)
+        if (ora>=19 && ora<=23) 
             return 3;
         
-        return -1;
+        return -1; // -1 fascia non monitorata
         
     }
      
-    public JSONObject getJson() throws SQLException{
+    /**
+    * Genera un JSONObject contenente tutti i dati contenuti nel DB
+    * per fornirli all'app Android.
+    * 
+    * @return Un JSONObject contenente tutti i dati contenuti nel DB
+    * @throws SQLException
+    */
+   public JSONObject getJson() throws SQLException{
         
         //ResultSet rs= query("select id,name,total,free,tendence,lat,lng from APP.PARCHEGGI");
             // join di parcheggi e storici per un unico json contenente tutto
@@ -304,14 +365,28 @@ public class DataManager {
         
     }
         
-    public ResultSet query( String q) throws SQLException{
+    /**
+    * Esegue la query q nel DB e ritorna il ResultSet corrispondente
+    * @param q La SQLQuery da eseguire
+    * @return Il ResultSet corrispondente alla query eseguita
+    * @throws SQLException
+    */
+   public ResultSet query( String q) throws SQLException{
         
         ResultSet rs = con.createStatement().executeQuery(q);
         
         return rs;
     }
     
-    public boolean isEmpty( String table) throws SQLException{              
+    /**
+    * Ritorna true se la tabella inesame è vuota
+    * 
+    * @param table Il nome della tabella da analizzare
+    * @return Un booleano che risponde alla domanda: la tabella è vuota?
+    * @throws SQLException
+    */
+   
+   public boolean isEmpty( String table) throws SQLException{              
         ResultSet rs;
         rs = query("select COUNT(*) from "+table);
         
@@ -323,9 +398,13 @@ public class DataManager {
         return false;
     }
     
-    public void close() throws SQLException{
+    /**
+    * Chiude la connessione al DB
+    * @throws SQLException Se ci sono problemi nella disconnesione
+    */
+   public void close() throws SQLException{
         
-        /*
+        
         // DISCONNECT
         try {//è una versione embedded quindi va chiusa quando l'applicazione termina
             DriverManager.getConnection(urlDB +"shutdown=true");
@@ -338,7 +417,7 @@ public class DataManager {
         
         con = null;
         
-        */ 
+        
     }
     
     /*
@@ -361,27 +440,5 @@ public class DataManager {
     }
     */
     
-    /* // SCHIFO
-    public String queryAll(){
-        // SCHIFO
-        String res="";
-        
-        try{ // try-catch aggiunto da me
-                ResultSet rs2 = con.createStatement().executeQuery("select * from PARCHEGGI");
-                while (rs2.next()) {
-                    res=res+"<li> name:"+rs2.getString(2)+"</li>";
-                    
-                    //out.println("<li> name:"+rs2.getString(1)+"</li>");
-                    
-                    //System.out.println("nome: " + rs2.getString(1) + " id:" + rs2.getInt(2));
-                    }
-            }
-            catch (java.sql.SQLException sqle){
-                // do nothing
-            }
-        
-        return res;
-    }
-            
-    */
+   
 }

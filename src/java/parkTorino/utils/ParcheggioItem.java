@@ -11,16 +11,7 @@ import parkTorino.Utils;
  * @author gcasarin
  */
 public class ParcheggioItem {
-    /*
-}
-
-package com.magidev.parcheggitorino;
-
-import android.graphics.Color;
-import com.google.android.gms.maps.model.LatLng;
-
-public class ParcheggioItem {
-    */
+   
     private String titolo;
     private int id;
     private int status;
@@ -31,7 +22,14 @@ public class ParcheggioItem {
     private int tendenza;
     private double distanza;
     
-    public ParcheggioItem(String titolo,int disponibilita,int totale,int tendenza)
+    /**
+    *
+    * @param titolo
+    * @param disponibilita
+    * @param totale
+    * @param tendenza
+    */
+   public ParcheggioItem(String titolo,int disponibilita,int totale,int tendenza)
     {
      this.titolo = titolo;
      this.disp = disponibilita;
@@ -40,7 +38,18 @@ public class ParcheggioItem {
     }
     
     
-    public ParcheggioItem(String titolo, int id, int status, int disp,int totale,int tendenza,double lat,double lng)
+    /**
+    *
+    * @param titolo
+    * @param id
+    * @param status
+    * @param disp
+    * @param totale
+    * @param tendenza
+    * @param lat
+    * @param lng
+    */
+   public ParcheggioItem(String titolo, int id, int status, int disp,int totale,int tendenza,double lat,double lng)
     {
      this.titolo = titolo;
      this.id=id;
@@ -53,7 +62,11 @@ public class ParcheggioItem {
      
     }
     
-    public String getTitolo() {
+    /**
+    *
+    * @return
+    */
+   public String getTitolo() {
 /*
      //nel caso il testo sia troppo lungo lo mando a capo
 String titoloS = titolo;
@@ -70,44 +83,80 @@ titoloS=titoloS.replace("#","\n");
     }
   */
     
-    public String getDisponibilita(){
+    /**
+    *
+    * @return
+    */
+   public String getDisponibilita(){
      if(disp>totale)
      return "occupati "+totale+"/"+totale;
     
      return "occupati "+disp+"/"+totale;
     }
     
-    public int getDisp(){
+    /**
+    *
+    * @return
+    */
+   public int getDisp(){
      return this.disp;   
         
     }
     
-    public int getTotale(){
+    /**
+    *
+    * @return
+    */
+   public int getTotale(){
      return this.totale;           
     }
     
-    public double getLat(){
+    /**
+    *
+    * @return
+    */
+   public double getLat(){
      return this.lat;           
     }
     
-    public double getLng(){
+    /**
+    *
+    * @return
+    */
+   public double getLng(){
      return this.lng;           
     }
     
-    public int getTend(){
+    /**
+    *
+    * @return
+    */
+   public int getTend(){
         return this.tendenza;        
     }
     
-    public int getId(){
+    /**
+    *
+    * @return
+    */
+   public int getId(){
         return this.id;
     }
     
-    public int getStatus(){
+    /**
+    *
+    * @return
+    */
+   public int getStatus(){
         return this.status;
     }
   
     
-    public String getTendenza()
+    /**
+    *
+    * @return
+    */
+   public String getTendenza()
     {
      if(tendenza>0) return "+";
      if(tendenza<0) return "-";
@@ -126,7 +175,11 @@ titoloS=titoloS.replace("#","\n");
     */
     
     
-    public double getDistanza()
+    /**
+    *
+    * @return
+    */
+   public double getDistanza()
     {
      return distanza;
     }
@@ -140,7 +193,11 @@ titoloS=titoloS.replace("#","\n");
     }
     */
     
-    public int getOccupazione()
+    /**
+    *
+    * @return
+    */
+   public int getOccupazione()
     {
      if(totale>0)
      //return 100-((totale-disp)*100)/totale;

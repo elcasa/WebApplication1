@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import json.JSONObject;
 
 /**
- *
+ * Servlet che fornisce il Json contenente tutti idati del DB
  * @author Giulio
  */
 @WebServlet(name = "jsonProviderServlet", urlPatterns = {"/jsonProviderServlet"})
