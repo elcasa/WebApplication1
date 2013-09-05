@@ -19,7 +19,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Classe rappresentante la lista di tutti i parcheggi che esegue anche il parsing
+ * Classe rappresentante la lista di tutti i parcheggi, esegue anche il parsing
  * del file xml fornito dal comune di Torino
  * 
  * @author Giulio

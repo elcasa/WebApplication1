@@ -157,3 +157,6 @@ Programma di caricamento classe database avviato - derby.database.classpath=''
 Thu Sep 05 23:56:36 CEST 2013:
 Arresto istanza 295dc08b-0140-f016-1357-fffff95d4cfb con caricatore classi D:\Giulio\UniVe\TAW\NetBeansProjects\WebApplication1\DB\ProvaDB1 
 Thu Sep 05 23:56:36 CEST 2013 Thread[DRDAConnThread_7,5,main] (DATABASE = ProvaDB1), (DRDAID = {16}), Arresto database 'ProvaDB1'.
+----------------------------------------------------------------
+Fri Sep 06 00:01:34 CEST 2013: Shutting down Derby engine
+----------------------------------------------------------------

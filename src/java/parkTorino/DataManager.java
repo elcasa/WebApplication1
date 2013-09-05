@@ -42,10 +42,8 @@ public class DataManager {
              
     
     /**
-    * Connette al DB, se il DB non esistesse lo crea
+    * Connette al DB, se il DB non esiste lo crea
     * e crea anche le tabelle
-    * 
-    * @param ultimaFasciaStor
     * @throws SQLException Se ci sono problemi con la creazione / connesione al DB
     */
    public DataManager() throws SQLException{
