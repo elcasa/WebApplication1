@@ -4,10 +4,9 @@
  */
 package parkTorino.utils;
 
-import parkTorino.Utils;
 
 /**
- *
+ * Classe che difinisce l'oggetto ParcheggioItem usato per rappresentare ogni parcheggio
  * @author gcasarin
  */
 public class ParcheggioItem {
@@ -23,7 +22,7 @@ public class ParcheggioItem {
     private double distanza;
     
     /**
-    *
+    * Costruttore limitato
     * @param titolo
     * @param disponibilita
     * @param totale
@@ -39,7 +38,8 @@ public class ParcheggioItem {
     
     
     /**
-    *
+    * Costruttore
+    * 
     * @param titolo
     * @param id
     * @param status
@@ -67,21 +67,9 @@ public class ParcheggioItem {
     * @return
     */
    public String getTitolo() {
-/*
-     //nel caso il testo sia troppo lungo lo mando a capo
-String titoloS = titolo;
-titoloS = Utils.splitString(titoloS);
-titoloS=titoloS.replace("#","\n");
-        return titoloS;
-        */
      return this.titolo;
     }
-  /*  
-    public LatLng getCoords()
-    {
-     return new LatLng(lat,lng);
-    }
-  */
+
     
     /**
     *
@@ -164,15 +152,6 @@ titoloS=titoloS.replace("#","\n");
      return "";
     }
     
-    /*
-    public int getTendenzaColor()
-    {
-     if(tendenza>0) return Color.parseColor("#339900");
-     if(tendenza<0) return Color.RED;
-    
-     return Color.WHITE;
-    }
-    */
     
     
     /**
@@ -184,15 +163,7 @@ titoloS=titoloS.replace("#","\n");
      return distanza;
     }
     
-    /*
-    public void updateDistanza()
-    {
-     this.distanza = LocationUtils.distanzaMax(
-     LocationUtils.getLocation(),new LatLng(this.lat,this.lng));
-     //Log.d("Distanza",this.titolo+":"+distanza);
-    }
-    */
-    
+        
     /**
     *
     * @return

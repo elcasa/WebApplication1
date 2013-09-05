@@ -17,6 +17,9 @@
 <%@page import="parkTorino.utils.Parser;" %>
 
 <%!
+   
+DataManager dm;   
+   
 public void jspInit() {
     // far partire il parsing e schedularlo
    
@@ -28,6 +31,13 @@ public void jspInit() {
     } catch (InterruptedException ie) {
     
     }
+    
+    // mi connetto al db
+    try {
+      dm = new DataManager();
+    } catch (SQLException ex) {
+      Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
+    }
             
 }
 %>
@@ -35,11 +45,11 @@ public void jspInit() {
 <%! private ArrayList<String[]> getData() 
 {
     String tmp[];
-    DataManager dm =null;
+    //DataManager dm =null;
     ArrayList<String[]> res = new ArrayList<String[]>();   
     
     try {
-        dm = new DataManager();
+     //   dm = new DataManager();
   
     ResultSet rs=null;
     
@@ -49,20 +59,25 @@ public void jspInit() {
     while (rs.next()) {
         tmp = new String[4];   
         tmp[0]=rs.getString(1);
-        // sarebbe int ma faccio getDouble per avere una divisione real
+        
         tmp[1]= String.valueOf( (int)( ( rs.getInt(2)-rs.getInt(3) ) / rs.getDouble(2) * 100 ) ); // percentuale occupata
         tmp[2]= String.valueOf( rs.getDouble(4) );
         tmp[3]= String.valueOf( rs.getDouble(5) );
         
         res.add(tmp);
         }
-    } catch (SQLException ex) {
-           // Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
-    }
     
+        rs.close(); 
+    
+    } catch (SQLException ex) {
+           Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
+    }
+            
     return res;  
         
 }
+
+
 
 private String printArrayData(){
     ArrayList<String[]> data = getData();
@@ -102,6 +117,17 @@ private String printArrayData(){
 */
 %>
 
+<%!
+
+public void jspDestroy() {
+   try {
+      dm.close();
+   } catch (SQLException ex) {
+      Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
+   }
+      
+}
+%>
 
 <!DOCTYPE html>
 <html>
@@ -118,19 +144,12 @@ private String printArrayData(){
       <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
 <script>
+
 var map;
 var coords = new Array();
 
  <%=  printArrayData()  %> 
-
-   
-   /*
-	coords[0] = new Array(); coords[0][0] = 45.07243; coords[0][1] = 7.67480;
-	coords[1] = new Array(); coords[1][0] = 45.06355; coords[1][1] = 7.68357;
-	coords[2] = new Array(); coords[2][0] = 45.07248; coords[2][1] = 7.66716;
-	coords[3] = new Array(); coords[3][0] = 45.04289; coords[3][1] = 7.67754;
-	coords[4] = new Array(); coords[4][0] = 45.07666; coords[4][1] = 7.68031;
-	*/
+      
 function initialize() {
   var center = new google.maps.LatLng(45.070854, 7.676640);
   var mapOptions = {
@@ -157,28 +176,17 @@ function initialize() {
 		marker.setMap(map);
 	}
 	  
-	  //aggiungo i marker
-	  //var marker = new google.maps.Marker({
-      //position: new google.maps.LatLng(coords[0][0],coords[0][1]),
-      //map: map,
-      //title: 'aggiunto il marker'
-	//});
 
 }
 google.maps.event.addDomListener(window, 'load', initialize);
-//print_2d_string_array(coords);
+
 
 function print_2d_string_array(array) 
 { 
 	var row; 
-   
-	//document.writeln("<div class=\"parcheggilist\">");
-	
+   	
 	var parkList = document.getElementById("parkList");
-   var parkList2 = document.getElementById("parkList2");
-      
-   //document.getElementById("parkList").innerHTML("erererer");
-	
+   	
 	for (row=0;row<array.length;++row) 
 	{ 
 				
@@ -189,10 +197,7 @@ function print_2d_string_array(array)
 		</div>
 		*/
 			
-         // TEST
-         
-         //parkList.innerHTML="FUNZIA";
-			
+         			
 			var span=document.createElement("span");
 			span.innerHTML=array[row][0]+" Occupati: "+array[row][1]+"%";
          			
@@ -200,29 +205,15 @@ function print_2d_string_array(array)
          div.setAttribute("class","progress-bar");
 						
 			var span2=document.createElement("span");
-			//span2.style="width: 4%;";
          span2.setAttribute("style","width: "+array[row][1]+"%;")
 						
 			div.appendChild(span2);
 			
 			parkList.appendChild(span);
 			parkList.appendChild(div);
-                 
-        
-			/*
-         document.writeln("Parcheggio "+row);
-			
-			//document.writeln("<span>");
-			//document.writeln("<a href='viewPark.html'><img src=\"images/ic_menu_myplaces.png\" width=\"50\" height=\"50\" /></a>")
-			//document.writeln("</span>");
-			
-			document.writeln("<div class=\"progress-bar\">");
-			document.writeln("<span></span>");
-			document.writeln("</div>");
-         */
-		//}	
+       
 	}
-	//document.writeln("</div>");
+
 }
 </script>
       

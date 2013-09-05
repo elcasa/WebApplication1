@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 import parkTorino.utils.ListaParcheggi;
 
 /**
- *
+ * 
  * @author Giulio
  */
 public class DataManager {
@@ -29,15 +29,16 @@ public class DataManager {
     //private String urlDB="jdbc:derby://localhost:1527/Park;";  // NON TOCCARE!
     private String urlDB="jdbc:derby://localhost:1527/ProvaDB1;";
     
+    
     private static final int MAX_INT_JDBC = java.lang.Integer.MAX_VALUE;
     
     private boolean DEBUG = true;
     private java.sql.Connection con = null;
     
     
-    LastStor ls = new LastStor(); // ultimo storico , per evitare di aggiornare lo storico ad ogni aggiornamento dei dati
+   // LastStor ls = new LastStor(); // ultimo storico , per evitare di aggiornare lo storico ad ogni aggiornamento dei dati
     private int fascia;
-    private int ultimaFasciaStor;
+    //private int ultimaFasciaStor;
              
     
     /**
@@ -47,11 +48,8 @@ public class DataManager {
     * @param ultimaFasciaStor
     * @throws SQLException Se ci sono problemi con la creazione / connesione al DB
     */
-   public DataManager( int ultimaFasciaStor ) throws SQLException{
-        
-        this.ultimaFasciaStor = ultimaFasciaStor;
-        // se -2 non usarlo, se -1 mai aggiornato gli storici
-        
+   public DataManager() throws SQLException{
+               
         try {
             
             Class.forName("org.apache.derby.jdbc.ClientDriver");
@@ -74,9 +72,7 @@ public class DataManager {
                     + "pomeMed FLOAT, pomeNum INT, seraMed FLOAT, seraNum INT )");                        
             
             //creazione tabelle in caso il db non esista
-            
-            ls.setOra(-1);
-    
+                
             }
         
         catch (ClassNotFoundException ex) {
@@ -84,15 +80,7 @@ public class DataManager {
         }
     }
     
-    /**
-    *
-    * @throws SQLException
-    */
-   public DataManager() throws SQLException{
-        this(-2);
-    }
-    
-   
+       
  /**
  * Esegue il parsing dell'xml contenente i dati attuali dei parcheggi di Torino
  * e aggiorna sia i dati attuali che gli storici, se già presenti, altrimenti li inserisce
@@ -188,17 +176,11 @@ public class DataManager {
                  }
              }
              //fascia=3; // test
-             // STORICI         
-             /*System.out.println("BEFORE IF IN FOR - VAR lastStor= " + lastStor+" , fascia = " + fascia ); 
-             if(fascia != -1 && lastStor!=fascia ){ // orario -1= periodo non monitorato per lo storico
-               */  
-             //System.out.println("BEFORE IF IN FOR - VAR lastStor= " + ls.getOra()+" , fascia = " + fascia ); 
-             System.out.println("BEFORE IF IN FOR - VAR lastStor= " + ultimaFasciaStor +" , fascia = " + fascia ); 
              
+             
+             // STORICI
              // orario -1= periodo non monitorato per lo storico
-             // ls.getOra()!=fascia, non ho già salvato lo storco per questa fascia
-             //if(fascia != -1 && ls.getOra()!=fascia ){  // aggiorna limitato
-             if(fascia != -1  ){    // aggiorna sempre
+             if(fascia != -1  ){    // se l'orario è in una fascia monitorata aggiorno lo storico
                  
                 res=0;
                 
@@ -223,17 +205,7 @@ public class DataManager {
                     updateStor.setInt(3, parkList.get(i).getId());
 
                     res=updateStor.executeUpdate();
-                    
-                    
-                    //res=updateStor(fascia, parkList.get(i).getId(), nuovaMedia, num+1);
-                    
-                    /* 
-                   float vecchiaMedia= rsOld.getFloat(2); // media della mattina
-                   int num= rsOld.getInt(3);   // num valori
-
-                   float nuovaMedia = (vecchiaMedia*num + parkList.get(i).getDisp() ) / (num+1);
-                   */
-
+                                        
                     if(DEBUG ){
                         System.out.println("STOR: " + parkList.get(i).getTitolo()+", UPDATE query res : "+res ); 
                     }
@@ -265,17 +237,7 @@ public class DataManager {
                 }
              }                     
         }// FINE CICLO FOR
-        /*
-        //if (fascia!=-1){
-            lastStor=fascia;
-            System.out.println("END OF FOR - VAR lastStor= " + lastStor+" !!!" ); 
-          //  }
-        */    
-        if (fascia!=-1){
-            ls.setOra(fascia);
-            System.out.println("END OF FOR - VAR lastStor= " + ls.getOra()+" !!!" ); 
-            }    
-        
+                
     }
     
    /**
@@ -325,8 +287,7 @@ public class DataManager {
                 
         while (rs.next()) { // ATTENZIONE QUERY
             jPark  = new JSONObject();
-            
-            
+                        
             jPark.put("id", rs.getInt(1));
             jPark.put("name", rs.getString(2));    
             jPark.put("total", rs.getInt(3));    
@@ -345,14 +306,14 @@ public class DataManager {
             i++;                               
         }
             
-        //rs.close ();                
+        rs.close ();                
         //return jParkArray;
         
         jPark = new JSONObject();
         jPark.put("parcheggi", jParkArray);
         return jPark;
                  
-        /* how to write it from the servlet
+        /* //come mostrarlo in una servlet
         
         response.setContentType("application/json");
         // Get the printwriter object from response to write the required json object to the output stream      
@@ -379,7 +340,7 @@ public class DataManager {
     }
     
     /**
-    * Ritorna true se la tabella inesame è vuota
+    * Ritorna true se la tabella in esame è vuota
     * 
     * @param table Il nome della tabella da analizzare
     * @return Un booleano che risponde alla domanda: la tabella è vuota?
@@ -395,6 +356,8 @@ public class DataManager {
             return true;
         }
         
+        rs.close();
+        
         return false;
     }
     
@@ -404,19 +367,23 @@ public class DataManager {
     */
    public void close() throws SQLException{
         
-        
         // DISCONNECT
         try {//è una versione embedded quindi va chiusa quando l'applicazione termina
-            DriverManager.getConnection(urlDB +"shutdown=true");
+           DriverManager.getConnection(urlDB +"shutdown=true");              
+           
         } catch (SQLException se) {//Stato = 08006 chiusura OK, altrimenti si è verificato un errore
-            if (!se.getSQLState().equals("08006")) {
+           
+           // XJ015 (with SQLCODE 50000) is the expected (successful) SQLSTATE for complete system shutdown. 
+           //08006 (with SQLCODE 45000), on the other hand, is the expected SQLSTATE for shutdown of only an individual database.
+           
+            if ( !se.getSQLState().equals("08006") || ! !se.getSQLState().equals("XJ015")  ) {
                 throw se;
             }
         
+            
         }
         
         con = null;
-        
         
     }
     

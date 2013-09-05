@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import parkTorino.DataManager;
-import parkTorino.ParsingServlet;
 
 /**
  * Runnable che sfrutta la clase DataManager per connettersi al DB
@@ -25,19 +24,19 @@ public class Parser implements Runnable{
         try {
             dm = new DataManager();
         } catch (SQLException ex) {
-            Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("Parser").log(Level.SEVERE, null, ex);
         }
         
         try {
             dm.parseAndInsert();
         } catch (SQLException ex) {
-            Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("Parser").log(Level.SEVERE, null, ex);
         }          
                 
         try {
             dm.close();
         } catch (SQLException ex) {
-            Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger("Parser").log(Level.SEVERE, null, ex);
         }
     }
         

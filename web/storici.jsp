@@ -227,7 +227,7 @@ function print_2d_string_array(array)
          tr.appendChild(stor2);
          tr.appendChild(stor3);
          tr.appendChild(stor4);
-                  
+         
          tableStorici.appendChild(tr);        
 	}
 

@@ -23,7 +23,7 @@ import parkTorino.utils.Parser;
 public class Config implements ServletContextListener {
 
     private ScheduledExecutorService scheduler;
-    private static final int MINUTE_SCHEDULING=15; // 15 aggiornamento xml parcheggi torino ogni 5 minuti, io ogni MINUTE_SCHEDULING
+    private static final int MINUTE_SCHEDULING=15; // aggiornamento xml parcheggi torino ogni 5 minuti, io ogni MINUTE_SCHEDULING
 
     /**
     *

@@ -19,7 +19,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * Classe rappresentante la lista di tutti i parcheggi che esegue anche il parsing
+ * del file xml fornito dal comune di Torino
+ * 
  * @author Giulio
  */
 public class ListaParcheggi {
@@ -29,7 +31,8 @@ public class ListaParcheggi {
     ArrayList<ParcheggioItem> parcheggiList = new ArrayList<ParcheggioItem>();
     
     /**
-    *
+    * Costruttore che inizializza la lista con i valori appena parsati, ottenuti tramite il metodo parse()
+    * 
     * @throws ParserConfigurationException
     * @throws IOException
     * @throws SAXException
@@ -54,7 +57,11 @@ public class ListaParcheggi {
         return parcheggiList;
     }
     
-    private void parse() throws ParserConfigurationException, IOException, SAXException {
+   /**
+    * Metodo che effettivamente esegue il parsing dell'xml
+    * 
+    */
+   private void parse() throws ParserConfigurationException, IOException, SAXException {
         
         ArrayList<ParcheggioItem> parcheggi = new ArrayList<ParcheggioItem>();
         URL url = new URL("http://opendata.5t.torino.it/get_pk");
