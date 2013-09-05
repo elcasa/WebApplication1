@@ -18,6 +18,19 @@
 
 
 <%! 
+   
+DataManager dm; 
+
+public void jspInit() {
+   
+   try {
+      dm = new DataManager();
+    } catch (SQLException ex) {
+      Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
+    }
+}
+   
+
 private int getPercentage( double total, int free){
    
    if ( free== -1){
@@ -30,44 +43,38 @@ private int getPercentage( double total, int free){
 private ArrayList<String[]> getData() 
 {
     String tmp[];
-    DataManager dm =null;
+    //DataManager dm =null;
     ArrayList<String[]> res = new ArrayList<String[]>();   
     
     try {
-        dm = new DataManager();
+//         dm = new DataManager();
   
-    ResultSet rs=null;
-    
-    //rs = dm.query("select name,total,free,lat,lng from PARCHEGGI");
-    
-    rs = dm.query("select PARCHEGGI.id,name,total,lat,lng,mattinamed,pranzomed,pomemed,seramed from PARCHEGGI left join STORICI on PARCHEGGI.id = STORICI.id");    
+         ResultSet rs=null;
+
+         //rs = dm.query("select name,total,free,lat,lng from PARCHEGGI");
+
+         rs = dm.query("select PARCHEGGI.id,name,total,lat,lng,mattinamed,pranzomed,pomemed,seramed from PARCHEGGI left join STORICI on PARCHEGGI.id = STORICI.id");    
+
+         while (rs.next()) {
+             tmp = new String[7];   
+             tmp[0]=rs.getString(2);
+
+             // total, free
+             tmp[1]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(6)) );
+             tmp[2]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(7)) );
+             tmp[3]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(8)) );
+             tmp[4]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(9)) );
+
+             tmp[5]= String.valueOf( rs.getDouble(4) );
+             tmp[6]= String.valueOf( rs.getDouble(5) );
+
+             res.add(tmp);
+             }
+
+             rs.close(); 
         
-    while (rs.next()) {
-        tmp = new String[7];   
-        tmp[0]=rs.getString(2);
-        /*
-        // sarebbe int ma faccio getDouble per avere una divisione real
-        // total - free / total
-        tmp[1]= String.valueOf( (int)( ( rs.getInt(3)-rs.getInt(6) ) / rs.getDouble(3) * 100 ) ); // percentuale occupata
-        tmp[2]= String.valueOf( (int)( ( rs.getInt(3)-rs.getInt(7) ) / rs.getDouble(3) * 100 ) ); // percentuale occupata
-        tmp[3]= String.valueOf( (int)( ( rs.getInt(3)-rs.getInt(8) ) / rs.getDouble(3) * 100 ) ); // percentuale occupata
-        tmp[4]= String.valueOf( (int)( ( rs.getInt(3)-rs.getInt(9) ) / rs.getDouble(3) * 100 ) ); // percentuale occupata
-        */
-        // total, free
-        
-        tmp[1]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(6)) );
-        tmp[2]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(7)) );
-        tmp[3]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(8)) );
-        tmp[4]= String.valueOf( getPercentage( rs.getDouble(3), rs.getInt(9)) );
-                     
-        
-        tmp[5]= String.valueOf( rs.getDouble(4) );
-        tmp[6]= String.valueOf( rs.getDouble(5) );
-        
-        res.add(tmp);
-        }
     } catch (SQLException ex) {
-           // Logger.getLogger(ParsingServlet.class.getName()).log(Level.SEVERE, null, ex);
+           Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
     }
     
     return res;  
@@ -110,8 +117,21 @@ private String printArrayData(){
     coords[1] = new Array(); 
     coords[1][0] = "menchi"; coords[1][1] = 42;coords[1][2] = 45.06355; coords[1][3] = 7.68357;
 */
+
 %>
 
+<%!
+
+public void jspDestroy() {
+   try {
+      dm.close();
+   } catch (SQLException ex) {
+      Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
+   }
+      
+}
+
+%>
 
 <!DOCTYPE html>
 <html>
@@ -132,13 +152,7 @@ var map;
 var coords = new Array();
 
 <%=  printArrayData()  %>
-   /*
-	coords[0] = new Array(); coords[0][0] = 45.07243; coords[0][1] = 7.67480;
-	coords[1] = new Array(); coords[1][0] = 45.06355; coords[1][1] = 7.68357;
-	coords[2] = new Array(); coords[2][0] = 45.07248; coords[2][1] = 7.66716;
-	coords[3] = new Array(); coords[3][0] = 45.04289; coords[3][1] = 7.67754;
-	coords[4] = new Array(); coords[4][0] = 45.07666; coords[4][1] = 7.68031;
-	*/
+   
 function initialize() {
   var center = new google.maps.LatLng(45.070854, 7.676640);
   var mapOptions = {
@@ -160,18 +174,11 @@ function initialize() {
 		position: new google.maps.LatLng(lat,lng),
 		map: map,
 		//title: 'aggiunto il marker '+index
-                title: name
+      title: name
 		});
 		marker.setMap(map);
 	}
 	  
-	  //aggiungo i marker
-	  //var marker = new google.maps.Marker({
-      //position: new google.maps.LatLng(coords[0][0],coords[0][1]),
-      //map: map,
-      //title: 'aggiunto il marker'
-	//});
-
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 //print_2d_string_array(coords);
@@ -179,15 +186,10 @@ google.maps.event.addDomListener(window, 'load', initialize);
 function print_2d_string_array(array) 
 { 
 	var row; 
-   
-	//document.writeln("<div class=\"parcheggilist\">");
-	
-	//var parkList = document.getElementById("parkList");
-   
+   	   
    var tableStorici = document.getElementById("table-storici");
       
-   //document.getElementById("parkList").innerHTML("erererer");
-	
+   	
 	for (row=0;row<array.length;++row) 
 	{ 
 				
@@ -226,39 +228,9 @@ function print_2d_string_array(array)
          tr.appendChild(stor3);
          tr.appendChild(stor4);
                   
-         tableStorici.appendChild(tr);
-         
-         /*
-			var span=document.createElement("span");
-			span.innerHTML=array[row][0]+" Occupati: "+array[row][1]+"%";
-         			
-			var div=document.createElement("div");
-         div.setAttribute("class","progress-bar");
-						
-			var span2=document.createElement("span");
-			//span2.style="width: 4%;";
-         span2.setAttribute("style","width: "+array[row][1]+"%;")
-						
-			div.appendChild(span2);
-			
-			parkList.appendChild(span);
-			parkList.appendChild(div);
-         */        
-        
-			/*
-         document.writeln("Parcheggio "+row);
-			
-			//document.writeln("<span>");
-			//document.writeln("<a href='viewPark.html'><img src=\"images/ic_menu_myplaces.png\" width=\"50\" height=\"50\" /></a>")
-			//document.writeln("</span>");
-			
-			document.writeln("<div class=\"progress-bar\">");
-			document.writeln("<span></span>");
-			document.writeln("</div>");
-         */
-		//}	
+         tableStorici.appendChild(tr);        
 	}
-	//document.writeln("</div>");
+
 }
 </script>
       
