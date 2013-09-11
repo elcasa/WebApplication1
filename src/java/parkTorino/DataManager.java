@@ -21,6 +21,8 @@ import org.xml.sax.SAXException;
 import parkTorino.utils.ListaParcheggi;
 
 /**
+ * Gestisce tutte le operazioni sul DB, creazione e accesso al DB, disconnessione dal DB,
+ * creazione, accesso in lettura e scrittura alle tabelle.
  * 
  * @author Giulio
  */
@@ -34,13 +36,9 @@ public class DataManager {
     
     private boolean DEBUG = true;
     private java.sql.Connection con = null;
-    
-    
-   // LastStor ls = new LastStor(); // ultimo storico , per evitare di aggiornare lo storico ad ogni aggiornamento dei dati
+   
     private int fascia;
-    //private int ultimaFasciaStor;
-             
-    
+        
     /**
     * Connette al DB, se il DB non esiste lo crea
     * e crea anche le tabelle
@@ -92,8 +90,7 @@ public class DataManager {
         che nessun record è stato modificato e che quindi il record relativo a quel parecheggio non esisteva
         Storici: 
         se trovo in storici un record con l'id attuale faccio la update calcolando la media, 
-        altrimenti inserisco nella fascia oraria attuale e -1 nelle altre
-        
+        altrimenti inserisco nella fascia oraria attuale e -1 nelle altre        
         */ 
                 
         ListaParcheggi lp=null;
@@ -114,32 +111,16 @@ public class DataManager {
         fascia = getFascia( lp.getOra() ); // fascia regolerà in che fascia oraria andrò a modificare la media               
         
         int res;
-        PreparedStatement insert = con.prepareStatement("INSERT INTO PARCHEGGI (id,name, status, total, free, tendence,lat,lng) VALUES(?,?,?,?,?,?,?,?)");                
-        PreparedStatement update = con.prepareStatement("UPDATE PARCHEGGI SET status=?, total=?, free=?, tendence=? WHERE id = ?");
         
-        PreparedStatement oldStor = con.prepareStatement("select * from STORICI WHERE id = ?");
-        
-        PreparedStatement insertStor = con.prepareStatement("INSERT INTO STORICI (id, mattinamed, mattinanum, pranzomed, pranzonum, pomemed, pomenum, seramed, seranum) VALUES(?,?,?,?,?,?,?,?,?)");                
-        //PreparedStatement updateStorVecchio = con.prepareStatement("UPDATE STORICI SET mattinamed=?, mattinanum=? WHERE id = ?");               
-        
+        PreparedStatement update = con.prepareStatement("UPDATE PARCHEGGI SET status=?, total=?, free=?, tendence=? WHERE id = ?");              
+                
         String[] updateFasce = new String[4];
         updateFasce[0]="UPDATE STORICI SET mattinamed=?, mattinanum=? WHERE id = ?";
         updateFasce[1]="UPDATE STORICI SET pranzomed=?, pranzonum=? WHERE id = ?";
         updateFasce[2]="UPDATE STORICI SET pomemed=?, pomenum=? WHERE id = ?";
         updateFasce[3]="UPDATE STORICI SET seramed=?, seranum=? WHERE id = ?";
+              
         
-        
-        /*
-        
-        Object obj = getServletContext().getAttribute("obj");  
-        if(obj==null || (!obj instanceof my.package.name.MyClass)) { // If object is null reinitialize it  
-           obj = new MyClass();  
-           getServletContext().setAttribute("obj", obj);  
-        }   
-         
-        */
-        
-            // where id = ? e poi grazie al punto di domanda faccio variare l'id per fare tutti gli update
         for(int i=0;i<parkList.size();i++) {
                 
              update.setInt(1, parkList.get(i).getStatus());
@@ -150,6 +131,7 @@ public class DataManager {
              update.setInt(5, parkList.get(i).getId());
                         
              res=update.executeUpdate();
+             
                 
              if(DEBUG ){
                  System.out.println("PARK: " + parkList.get(i).getTitolo()+", UPDATE query res : "+res ); 
@@ -157,6 +139,8 @@ public class DataManager {
                 
              if (res==0){
                  // non ha aggiornato alcun record!!! allora faccio una insert
+                
+                 PreparedStatement insert = con.prepareStatement("INSERT INTO PARCHEGGI (id,name, status, total, free, tendence,lat,lng) VALUES(?,?,?,?,?,?,?,?)");                
                     
                  insert.setInt(1, parkList.get(i).getId());                    
                  insert.setString(2, parkList.get(i).getTitolo());
@@ -168,23 +152,23 @@ public class DataManager {
                  insert.setDouble(8, parkList.get(i).getLng());
                     
                  res=insert.executeUpdate();
+                 insert.close();
                     
                  if(DEBUG ){
                      System.out.println("PARK: " + parkList.get(i).getTitolo()+", INSERT query res: "+res ); 
                  }
-             }
-             //fascia=3; // test
-             
+             }             
              
              // STORICI
              // orario -1= periodo non monitorato per lo storico
              if(fascia != -1  ){    // se l'orario è in una fascia monitorata aggiorno lo storico
                  
                 res=0;
+                PreparedStatement oldStor = con.prepareStatement("select * from STORICI WHERE id = ?");
                 
-                oldStor.setInt(1, parkList.get(i).getId()); // select * from STORICI WHERE id = ?
+                oldStor.setInt(1, parkList.get(i).getId());
                 ResultSet rsOld=oldStor.executeQuery();
-
+                
                 // calcolo media posti liberi
                 if (rsOld.next()){
 
@@ -209,10 +193,14 @@ public class DataManager {
                     }
 
                 }
-
+                
+                rsOld.close();
+                oldStor.close();
 
                 if (res==0){
                     // non ha aggiornato alcun record!!! allora faccio una insert
+                   
+                   PreparedStatement insertStor = con.prepareStatement("INSERT INTO STORICI (id, mattinamed, mattinanum, pranzomed, pranzonum, pomemed, pomenum, seramed, seranum) VALUES(?,?,?,?,?,?,?,?,?)");                
 
                     insertStor.setInt(1, parkList.get(i).getId());
                     insertStor.setFloat(2, -1f ); //mattina media
@@ -228,6 +216,7 @@ public class DataManager {
                     insertStor.setInt(fascia*2+3, 1);
 
                     res=insertStor.executeUpdate();
+                    insertStor.close();
 
                     if(DEBUG ){
                         System.out.println("STOR: " + parkList.get(i).getTitolo()+", INSERT query res: "+res ); 
@@ -235,7 +224,7 @@ public class DataManager {
                 }
              }                     
         }// FINE CICLO FOR
-                
+        update.close();
     }
     
    /**
@@ -303,10 +292,9 @@ public class DataManager {
             jParkArray.put(i,jPark);
             i++;                               
         }
-            
-        rs.close ();                
-        //return jParkArray;
         
+        rs.close ();                
+                
         jPark = new JSONObject();
         jPark.put("parcheggi", jParkArray);
         return jPark;

@@ -21,6 +21,8 @@
 DataManager dm;   
    
 public void jspInit() {
+   
+   System.out.println("INIT");
     // far partire il parsing e schedularlo
    
     Thread t = new Thread( new Parser());
@@ -31,14 +33,6 @@ public void jspInit() {
     } catch (InterruptedException ie) {
     
     }
-    
-    // mi connetto al db
-    try {
-      dm = new DataManager();
-    } catch (SQLException ex) {
-      Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
-    }
-            
 }
 %>
 
@@ -49,7 +43,7 @@ public void jspInit() {
     ArrayList<String[]> res = new ArrayList<String[]>();   
     
     try {
-     //   dm = new DataManager();
+    dm = new DataManager();
   
     ResultSet rs=null;
     
@@ -68,6 +62,7 @@ public void jspInit() {
         }
     
         rs.close(); 
+        dm.close();
     
     } catch (SQLException ex) {
            Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
@@ -117,17 +112,6 @@ private String printArrayData(){
 */
 %>
 
-<%!
-
-public void jspDestroy() {
-   try {
-      dm.close();
-   } catch (SQLException ex) {
-      Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
-   }
-      
-}
-%>
 
 <!DOCTYPE html>
 <html>
@@ -247,3 +231,29 @@ function print_2d_string_array(array)
       
    </body>
 </html>
+
+<%!
+
+/*
+    INIT
+    // mi connetto al db
+    try {
+      dm = new DataManager();
+    } catch (SQLException ex) {
+      Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
+    }
+    */
+/*
+public void jspDestroy() {
+   
+   System.out.println("DESTROY");
+   
+   try {
+      dm.close();
+   } catch (SQLException ex) {
+      Logger.getLogger("index.jsp").log(Level.SEVERE, null, ex);
+   }
+     
+}
+*/
+%>

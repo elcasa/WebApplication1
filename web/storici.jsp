@@ -21,16 +21,6 @@
    
 DataManager dm; 
 
-public void jspInit() {
-   
-   try {
-      dm = new DataManager();
-    } catch (SQLException ex) {
-      Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
-    }
-}
-   
-
 private int getPercentage( double total, int free){
    
    if ( free== -1){
@@ -47,7 +37,7 @@ private ArrayList<String[]> getData()
     ArrayList<String[]> res = new ArrayList<String[]>();   
     
     try {
-//         dm = new DataManager();
+         dm = new DataManager();
   
          ResultSet rs=null;
 
@@ -72,6 +62,7 @@ private ArrayList<String[]> getData()
              }
 
              rs.close(); 
+             dm.close();
         
     } catch (SQLException ex) {
            Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
@@ -120,18 +111,6 @@ private String printArrayData(){
 
 %>
 
-<%!
-
-public void jspDestroy() {
-   try {
-      dm.close();
-   } catch (SQLException ex) {
-      Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
-   }
-      
-}
-
-%>
 
 <!DOCTYPE html>
 <html>
@@ -269,3 +248,26 @@ function print_2d_string_array(array)
    </body>
 </html>
 
+<%!
+/*
+public void jspInit() {
+
+   try {
+      dm = new DataManager();
+    } catch (SQLException ex) {
+      Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
+    }
+
+}   
+
+public void jspDestroy() {
+   
+   try {
+      dm.close();
+   } catch (SQLException ex) {
+      Logger.getLogger("storici.jsp").log(Level.SEVERE, null, ex);
+   }
+     
+}
+*/
+%>

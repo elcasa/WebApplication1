@@ -26,18 +26,6 @@ public class jsonProviderServlet extends HttpServlet {
    
    DataManager dm;
    
-   public void init(ServletConfig config) throws ServletException 
-   { 
-      super.init(config);  // call the init method of base class
-
-      try {
-            dm=new DataManager();
-                                    
-      } catch (SQLException ex) {
-            Logger.getLogger(jsonProviderServlet.class.getName()).log(Level.SEVERE, null, ex);
-      }
-   }
-
     /**
      * Processes requests for both HTTP
      * <code>GET</code> and
@@ -54,8 +42,9 @@ public class jsonProviderServlet extends HttpServlet {
         JSONObject jsonParks=null;
         
         try {
-            
+            dm=new DataManager();
             jsonParks = dm.getJson();
+            dm.close();
             
         } catch (SQLException ex) {
             Logger.getLogger(jsonProviderServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -112,7 +101,21 @@ public class jsonProviderServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
     
+    /*
+   public void init(ServletConfig config) throws ServletException 
+   { 
+      super.init(config);  // call the init method of base class
+
+      try {
+            dm=new DataManager();
+                                    
+      } catch (SQLException ex) {
+            Logger.getLogger(jsonProviderServlet.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }
+*/
     
+    /*
     @Override
     public void destroy() {  
        
@@ -122,5 +125,5 @@ public class jsonProviderServlet extends HttpServlet {
             Logger.getLogger(jsonProviderServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
        super.destroy();
-   } 
+   } */
 }
